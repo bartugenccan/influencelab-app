@@ -19,7 +19,7 @@ export const HomeScreen = () => {
       <LinearGradient
         pointerEvents="none"
         colors={[
-          'rgba(123, 80, 255, 0)', // merkez
+          'rgba(123, 0, 255, 0)', // merkez
           "#1b1022",       // kenarlar
         ]}
         start={{ x: 0, y: 0.1 }}

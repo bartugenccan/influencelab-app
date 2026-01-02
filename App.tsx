@@ -15,9 +15,13 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { AppState, AppStateStatus, Platform, StyleSheet } from 'react-native';
 import { QueryClient, QueryClientProvider, focusManager } from '@tanstack/react-query';
 import { StatusBar } from 'expo-status-bar';
+import { Asset } from 'expo-asset';
 
 // i18n
 import './i18n';
+
+// Video asset to preload
+const videoAsset = require('./assets/videos/influencelab-ai.mp4');
 
 export default function App() {
   const [queryClient] = useState(
@@ -44,6 +48,21 @@ export default function App() {
     Inter_700Bold,
   });
 
+  const [videoLoaded, setVideoLoaded] = useState(false);
+
+  useEffect(() => {
+    async function preloadVideo() {
+      try {
+        await Asset.loadAsync(videoAsset);
+        setVideoLoaded(true);
+      } catch (error) {
+        console.warn('Video preload failed:', error);
+        setVideoLoaded(true); // Continue anyway
+      }
+    }
+    preloadVideo();
+  }, []);
+
   useEffect(() => {
     if (fontError) {
       throw fontError;
@@ -66,7 +85,7 @@ export default function App() {
     };
   }, []);
 
-  if (!fontsLoaded) {
+  if (!fontsLoaded || !videoLoaded) {
     return null;
   }
 

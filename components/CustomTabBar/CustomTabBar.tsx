@@ -84,14 +84,14 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   tabLabel: {
-    fontSize: scale(12),
+    fontSize: scale(8),
     marginTop: verticalScale(4),
   },
   activeDot: {
     width: scale(4),
     height: scale(4),
     borderRadius: scale(2),
-    backgroundColor: Colors.secondary,
+    backgroundColor: "#bdbdbd",
     marginTop: verticalScale(4),
   },
 });
