@@ -3,11 +3,18 @@ import 'react-native-gesture-handler';
 import React, { useCallback, useEffect, useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { AppNavigator } from './navigation/AppNavigator';
-import { useFonts } from 'expo-font';
+import {
+  useFonts,
+  Inter_400Regular,
+  Inter_500Medium,
+  Inter_600SemiBold,
+  Inter_700Bold,
+} from '@expo-google-fonts/inter';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { AppState, AppStateStatus, Platform, StyleSheet } from 'react-native';
 import { QueryClient, QueryClientProvider, focusManager } from '@tanstack/react-query';
+import { StatusBar } from 'expo-status-bar';
 
 // i18n
 import './i18n';
@@ -31,7 +38,10 @@ export default function App() {
   );
 
   const [fontsLoaded, fontError] = useFonts({
-    'YuseiMagic-Regular': require('./assets/fonts/YuseiMagic-Regular.ttf'),
+    Inter_400Regular,
+    Inter_500Medium,
+    Inter_600SemiBold,
+    Inter_700Bold,
   });
 
   useEffect(() => {
@@ -62,6 +72,7 @@ export default function App() {
 
   return (
     <GestureHandlerRootView style={styles.container}>
+      <StatusBar style="light" />
       <QueryClientProvider client={queryClient}>
         <SafeAreaProvider>
           <NavigationContainer>
