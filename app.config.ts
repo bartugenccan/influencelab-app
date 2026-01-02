@@ -1,24 +1,20 @@
 import type { ExpoConfig } from '@expo/config-types';
 
 const config: ExpoConfig = {
-  name: 'rn-template',
-  slug: 'rn-template',
+  name: 'influencelab',
+  slug: 'influencelab',
   version: '1.0.0',
   orientation: 'portrait',
   icon: './assets/images/icon.png',
   userInterfaceStyle: 'light',
   newArchEnabled: true,
-  splash: {
-    image: './assets/images/splash.png',
-    resizeMode: 'contain',
-    backgroundColor: '#ffffff',
-  },
   assetBundlePatterns: ['**/*'],
   ios: {
     supportsTablet: true,
     infoPlist: {
       NSCameraUsageDescription: 'This app needs access to your camera to capture clothing items.',
-      NSPhotoLibraryUsageDescription: 'This app needs access to your photo library to select clothing images.',
+      NSPhotoLibraryUsageDescription:
+        'This app needs access to your photo library to select clothing images.',
     },
   },
   android: {

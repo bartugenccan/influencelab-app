@@ -55,7 +55,7 @@ const CustomTabBar: React.FC<BottomTabBarProps> = ({ state, descriptors, navigat
             activeOpacity={0.7}>
             <View style={styles.tabContent}>
               <Ionicons name={iconName as any} size={24} color={isFocused ? '#fff' : '#8080C8'} />
-              <CustomText style={[styles.tabLabel, { color: isFocused ? '#fff' : '#8080C8' }]}>
+              <CustomText style={[styles.tabLabel, { color: isFocused ? '#fff' : '#8080C8', }]}>
                 {translatedName?.toLocaleUpperCase()}
               </CustomText>
               {isFocused && <View style={styles.activeDot} />}
@@ -70,7 +70,7 @@ const CustomTabBar: React.FC<BottomTabBarProps> = ({ state, descriptors, navigat
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
-    backgroundColor: '#2D10FF',
+    backgroundColor: Colors.tabBar,
     height: verticalScale(84),
     paddingBottom: verticalScale(23),
   },
@@ -84,14 +84,14 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   tabLabel: {
-    fontSize: scale(12),
+    fontSize: scale(8),
     marginTop: verticalScale(4),
   },
   activeDot: {
     width: scale(4),
     height: scale(4),
     borderRadius: scale(2),
-    backgroundColor: Colors.secondary,
+    backgroundColor: "#bdbdbd",
     marginTop: verticalScale(4),
   },
 });

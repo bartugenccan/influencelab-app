@@ -3,17 +3,25 @@ import 'react-native-gesture-handler';
 import React, { useCallback, useEffect, useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { AppNavigator } from './navigation/AppNavigator';
-import { useFonts } from 'expo-font';
+import {
+  useFonts,
+  Inter_400Regular,
+  Inter_500Medium,
+  Inter_600SemiBold,
+  Inter_700Bold,
+} from '@expo-google-fonts/inter';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { AppState, AppStateStatus, Platform, StyleSheet } from 'react-native';
-import * as SplashScreen from 'expo-splash-screen';
 import { QueryClient, QueryClientProvider, focusManager } from '@tanstack/react-query';
+import { StatusBar } from 'expo-status-bar';
+import { Asset } from 'expo-asset';
 
 // i18n
 import './i18n';
 
-SplashScreen.preventAutoHideAsync().catch(() => null);
+// Video asset to preload
+const videoAsset = require('./assets/videos/influencelab-ai.mp4');
 
 export default function App() {
   const [queryClient] = useState(
@@ -34,8 +42,26 @@ export default function App() {
   );
 
   const [fontsLoaded, fontError] = useFonts({
-    'YuseiMagic-Regular': require('./assets/fonts/YuseiMagic-Regular.ttf'),
+    Inter_400Regular,
+    Inter_500Medium,
+    Inter_600SemiBold,
+    Inter_700Bold,
   });
+
+  const [videoLoaded, setVideoLoaded] = useState(false);
+
+  useEffect(() => {
+    async function preloadVideo() {
+      try {
+        await Asset.loadAsync(videoAsset);
+        setVideoLoaded(true);
+      } catch (error) {
+        console.warn('Video preload failed:', error);
+        setVideoLoaded(true); // Continue anyway
+      }
+    }
+    preloadVideo();
+  }, []);
 
   useEffect(() => {
     if (fontError) {
@@ -59,18 +85,13 @@ export default function App() {
     };
   }, []);
 
-  const onLayoutRootView = useCallback(async () => {
-    if (fontsLoaded || fontError) {
-      await SplashScreen.hideAsync();
-    }
-  }, [fontsLoaded, fontError]);
-
-  if (!fontsLoaded) {
+  if (!fontsLoaded || !videoLoaded) {
     return null;
   }
 
   return (
-    <GestureHandlerRootView style={styles.container} onLayout={onLayoutRootView}>
+    <GestureHandlerRootView style={styles.container}>
+      <StatusBar style="light" />
       <QueryClientProvider client={queryClient}>
         <SafeAreaProvider>
           <NavigationContainer>
