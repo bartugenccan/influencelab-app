@@ -7,13 +7,10 @@ import { useFonts } from 'expo-font';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { AppState, AppStateStatus, Platform, StyleSheet } from 'react-native';
-import * as SplashScreen from 'expo-splash-screen';
 import { QueryClient, QueryClientProvider, focusManager } from '@tanstack/react-query';
 
 // i18n
 import './i18n';
-
-SplashScreen.preventAutoHideAsync().catch(() => null);
 
 export default function App() {
   const [queryClient] = useState(
@@ -59,18 +56,12 @@ export default function App() {
     };
   }, []);
 
-  const onLayoutRootView = useCallback(async () => {
-    if (fontsLoaded || fontError) {
-      await SplashScreen.hideAsync();
-    }
-  }, [fontsLoaded, fontError]);
-
   if (!fontsLoaded) {
     return null;
   }
 
   return (
-    <GestureHandlerRootView style={styles.container} onLayout={onLayoutRootView}>
+    <GestureHandlerRootView style={styles.container}>
       <QueryClientProvider client={queryClient}>
         <SafeAreaProvider>
           <NavigationContainer>
