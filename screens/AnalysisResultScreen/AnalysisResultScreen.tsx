@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { View, StyleSheet, TouchableOpacity, ScrollView, Image, Platform } from 'react-native';
+import React, { useEffect, useRef, useState } from 'react';
+import { View, StyleSheet, TouchableOpacity, ScrollView, Image, Platform, Animated } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRoute, type RouteProp } from '@react-navigation/native';
@@ -15,6 +15,126 @@ import type { HomeStackParamList } from '@/types/navigation/stacks';
 
 type AnalysisResultRouteProp = RouteProp<HomeStackParamList, AppRoutes.ANALYSIS_RESULT>;
 
+// Animated Score Card Component
+const AnimatedScoreCard = ({
+    title,
+    score,
+    icon,
+    delay = 0,
+    getScoreColor,
+}: {
+    title: string;
+    score: number;
+    icon: string;
+    delay?: number;
+    getScoreColor: (score: number) => string;
+}) => {
+    const progressAnim = useRef(new Animated.Value(0)).current;
+    const fadeAnim = useRef(new Animated.Value(0)).current;
+
+    useEffect(() => {
+        Animated.sequence([
+            Animated.delay(delay),
+            Animated.parallel([
+                Animated.timing(fadeAnim, {
+                    toValue: 1,
+                    duration: 400,
+                    useNativeDriver: true,
+                }),
+                Animated.timing(progressAnim, {
+                    toValue: score * 10,
+                    duration: 800,
+                    useNativeDriver: false,
+                }),
+            ]),
+        ]).start();
+    }, [score, delay]);
+
+    const progressWidth = progressAnim.interpolate({
+        inputRange: [0, 100],
+        outputRange: ['0%', '100%'],
+    });
+
+    return (
+        <Animated.View style={[styles.scoreCard, { opacity: fadeAnim }]}>
+            <View style={styles.scoreHeader}>
+                <Ionicons name={icon as any} size={20} color={Colors.white} />
+                <CustomText fontFamily="medium" style={styles.scoreTitle}>{title}</CustomText>
+            </View>
+            <View style={styles.scoreBarContainer}>
+                <Animated.View style={[styles.scoreBarFillWrapper, { width: progressWidth }]}>
+                    <LinearGradient
+                        colors={['#A413EC', '#63A5F7']}
+                        start={{ x: 0, y: 0 }}
+                        end={{ x: 1, y: 0 }}
+                        style={styles.scoreBarFill}
+                    />
+                </Animated.View>
+            </View>
+            <CustomText fontFamily="bold" style={[styles.scoreValue, { color: getScoreColor(score) }]}>
+                {score}
+            </CustomText>
+        </Animated.View>
+    );
+};
+
+// Animated Section Component - triggers when scrolled into view
+const AnimatedSection = ({
+    children,
+    scrollY,
+    screenHeight,
+}: {
+    children: React.ReactNode;
+    scrollY: Animated.Value;
+    screenHeight: number;
+}) => {
+    const fadeAnim = useRef(new Animated.Value(0)).current;
+    const slideAnim = useRef(new Animated.Value(40)).current;
+    const [hasAnimated, setHasAnimated] = useState(false);
+    const [elementY, setElementY] = useState(0);
+
+    useEffect(() => {
+        if (hasAnimated || elementY === 0) return;
+
+        const listenerId = scrollY.addListener(({ value }) => {
+            // Trigger when element is about to enter the viewport
+            const triggerPoint = value + screenHeight - 100;
+
+            if (triggerPoint >= elementY && !hasAnimated) {
+                setHasAnimated(true);
+                Animated.parallel([
+                    Animated.timing(fadeAnim, {
+                        toValue: 1,
+                        duration: 500,
+                        useNativeDriver: true,
+                    }),
+                    Animated.timing(slideAnim, {
+                        toValue: 0,
+                        duration: 500,
+                        useNativeDriver: true,
+                    }),
+                ]).start();
+            }
+        });
+
+        return () => scrollY.removeListener(listenerId);
+    }, [elementY, hasAnimated, screenHeight]);
+
+    const handleLayout = (event: any) => {
+        const { y } = event.nativeEvent.layout;
+        setElementY(y);
+    };
+
+    return (
+        <Animated.View
+            onLayout={handleLayout}
+            style={{ opacity: fadeAnim, transform: [{ translateY: slideAnim }] }}
+        >
+            {children}
+        </Animated.View>
+    );
+};
+
 export const AnalysisResultScreen = () => {
     const route = useRoute<AnalysisResultRouteProp>();
     const navigation = useAppNavigation();
@@ -22,12 +142,35 @@ export const AnalysisResultScreen = () => {
 
     const analysis = result.coach_analysis;
 
+    // Overall score counting animation
+    const [displayScore, setDisplayScore] = useState(0);
+    const scoreAnim = useRef(new Animated.Value(0)).current;
+
+    // Scroll tracking for animated sections
+    const scrollY = useRef(new Animated.Value(0)).current;
+    const [screenHeight, setScreenHeight] = useState(800);
+
+    useEffect(() => {
+        Animated.timing(scoreAnim, {
+            toValue: analysis.overall_score,
+            duration: 1500,
+            useNativeDriver: false,
+        }).start();
+
+        const listenerId = scoreAnim.addListener(({ value }) => {
+            setDisplayScore(Math.round(value));
+        });
+
+        return () => {
+            scoreAnim.removeListener(listenerId);
+        };
+    }, [analysis.overall_score]);
+
     const handleDone = () => {
         navigation.navigate(AppRoutes.HOME);
     };
 
     const handleReCheckWithCaption = () => {
-        // Navigate to loading screen with the revised caption
         navigation.replace(AppRoutes.ANALYSIS_LOADING, {
             media,
             caption: analysis.revised_caption,
@@ -40,26 +183,6 @@ export const AnalysisResultScreen = () => {
         if (score >= 6) return '#FFC107';
         return '#F44336';
     };
-
-    const renderScoreCard = (title: string, score: number, icon: string) => (
-        <View style={styles.scoreCard}>
-            <View style={styles.scoreHeader}>
-                <Ionicons name={icon as any} size={20} color={Colors.white} />
-                <CustomText fontFamily="medium" style={styles.scoreTitle}>{title}</CustomText>
-            </View>
-            <View style={styles.scoreBarContainer}>
-                <LinearGradient
-                    colors={['#A413EC', '#63A5F7']}
-                    start={{ x: 0, y: 0 }}
-                    end={{ x: 1, y: 0 }}
-                    style={[styles.scoreBarFill, { width: `${score * 10}%` }]}
-                />
-            </View>
-            <CustomText fontFamily="bold" style={[styles.scoreValue, { color: getScoreColor(score) }]}>
-                {score}
-            </CustomText>
-        </View>
-    );
 
     const renderListSection = (title: string, items: string[], icon: string, color: string) => (
         <View style={styles.listSection}>
@@ -103,7 +226,16 @@ export const AnalysisResultScreen = () => {
                 <View style={styles.headerRight} />
             </View>
 
-            <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
+            <ScrollView
+                style={styles.scrollView}
+                showsVerticalScrollIndicator={false}
+                onScroll={Animated.event(
+                    [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+                    { useNativeDriver: false }
+                )}
+                scrollEventThrottle={16}
+                onLayout={(e) => setScreenHeight(e.nativeEvent.layout.height)}
+            >
                 {/* Overall Score */}
                 <View style={styles.overallScoreContainer}>
                     <LinearGradient
@@ -112,7 +244,7 @@ export const AnalysisResultScreen = () => {
                     >
                         <CustomText fontFamily="medium" style={styles.overallLabel}>Overall Score</CustomText>
                         <CustomText fontFamily="bold" style={styles.overallScore}>
-                            {analysis.overall_score}
+                            {displayScore}
                         </CustomText>
                         <CustomText fontFamily="regular" style={styles.overallSubtext}>
                             out of 100
@@ -129,64 +261,90 @@ export const AnalysisResultScreen = () => {
 
                 {/* Score Cards */}
                 <View style={styles.scoresContainer}>
-                    {renderScoreCard('Visual Score', analysis.visual_score, 'eye-outline')}
-                    {renderScoreCard('Caption Score', analysis.caption_score, 'text-outline')}
-                    {renderScoreCard('Alignment', analysis.alignment_score, 'compass-outline')}
+                    <AnimatedScoreCard
+                        title="Visual Score"
+                        score={analysis.visual_score}
+                        icon="eye-outline"
+                        delay={300}
+                        getScoreColor={getScoreColor}
+                    />
+                    <AnimatedScoreCard
+                        title="Caption Score"
+                        score={analysis.caption_score}
+                        icon="text-outline"
+                        delay={500}
+                        getScoreColor={getScoreColor}
+                    />
+                    <AnimatedScoreCard
+                        title="Alignment"
+                        score={analysis.alignment_score}
+                        icon="compass-outline"
+                        delay={700}
+                        getScoreColor={getScoreColor}
+                    />
                 </View>
 
                 {/* Strengths */}
                 {analysis.strengths && analysis.strengths.length > 0 && (
-                    renderListSection('Strengths', analysis.strengths, 'checkmark-circle', '#4CAF50')
+                    <AnimatedSection scrollY={scrollY} screenHeight={screenHeight}>
+                        {renderListSection('Strengths', analysis.strengths, 'checkmark-circle', '#4CAF50')}
+                    </AnimatedSection>
                 )}
 
                 {/* Improvements */}
                 {analysis.improvments && analysis.improvments.length > 0 && (
-                    renderListSection('Areas to Improve', analysis.improvments, 'arrow-up-circle', '#FFC107')
+                    <AnimatedSection scrollY={scrollY} screenHeight={screenHeight}>
+                        {renderListSection('Areas to Improve', analysis.improvments, 'arrow-up-circle', '#FFC107')}
+                    </AnimatedSection>
                 )}
 
                 {/* Quick Wins */}
                 {analysis.quick_wins && analysis.quick_wins.length > 0 && (
-                    renderListSection('Quick Wins', analysis.quick_wins, 'flash', '#A413EC')
+                    <AnimatedSection scrollY={scrollY} screenHeight={screenHeight}>
+                        {renderListSection('Quick Wins', analysis.quick_wins, 'flash', '#A413EC')}
+                    </AnimatedSection>
                 )}
 
                 {/* Revised Caption */}
                 {analysis.revised_caption && (
-                    <View style={styles.captionSection}>
-                        <View style={styles.captionHeader}>
-                            <Ionicons name="create-outline" size={20} color="#63A5F7" />
-                            <CustomText fontFamily="semiBold" style={styles.captionTitle}>
-                                Suggested Caption
-                            </CustomText>
-                        </View>
-                        {/* Glowing Shadow Wrapper */}
-                        <View style={styles.captionBoxWrapper}>
-                            <View style={styles.captionBox}>
-                                <CustomText
-                                    fontFamily="regular"
-                                    style={styles.captionText}
-                                    selectable={false}
-                                >
-                                    {analysis.revised_caption}
+                    <AnimatedSection scrollY={scrollY} screenHeight={screenHeight}>
+                        <View style={styles.captionSection}>
+                            <View style={styles.captionHeader}>
+                                <Ionicons name="create-outline" size={20} color="#63A5F7" />
+                                <CustomText fontFamily="semiBold" style={styles.captionTitle}>
+                                    Suggested Caption
                                 </CustomText>
-                                <TouchableOpacity
-                                    style={styles.reCheckButton}
-                                    onPress={handleReCheckWithCaption}
-                                >
-                                    <LinearGradient
-                                        colors={['#A413EC', '#450374ff']}
-                                        start={{ x: 0, y: 0 }}
-                                        end={{ x: 1, y: 0 }}
-                                        style={styles.reCheckButtonGradient}
+                            </View>
+                            {/* Glowing Shadow Wrapper */}
+                            <View style={styles.captionBoxWrapper}>
+                                <View style={styles.captionBox}>
+                                    <CustomText
+                                        fontFamily="regular"
+                                        style={styles.captionText}
+                                        selectable={false}
                                     >
-                                        <Ionicons name="refresh" size={18} color={Colors.white} />
-                                        <CustomText fontFamily="medium" style={styles.reCheckText}>
-                                            Re-Check With Updated Caption
-                                        </CustomText>
-                                    </LinearGradient>
-                                </TouchableOpacity>
+                                        {analysis.revised_caption}
+                                    </CustomText>
+                                    <TouchableOpacity
+                                        style={styles.reCheckButton}
+                                        onPress={handleReCheckWithCaption}
+                                    >
+                                        <LinearGradient
+                                            colors={['#A413EC', '#450374ff']}
+                                            start={{ x: 0, y: 0 }}
+                                            end={{ x: 1, y: 0 }}
+                                            style={styles.reCheckButtonGradient}
+                                        >
+                                            <Ionicons name="refresh" size={18} color={Colors.white} />
+                                            <CustomText fontFamily="medium" style={styles.reCheckText}>
+                                                Re-Check With Updated Caption
+                                            </CustomText>
+                                        </LinearGradient>
+                                    </TouchableOpacity>
+                                </View>
                             </View>
                         </View>
-                    </View>
+                    </AnimatedSection>
                 )}
 
                 {/* Done Button */}
@@ -308,7 +466,12 @@ const styles = StyleSheet.create({
         overflow: 'hidden',
         marginBottom: verticalScale(8),
     },
+    scoreBarFillWrapper: {
+        height: '100%',
+        overflow: 'hidden',
+    },
     scoreBarFill: {
+        width: '100%',
         height: '100%',
         borderRadius: scale(4),
     },
