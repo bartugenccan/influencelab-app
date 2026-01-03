@@ -4,7 +4,6 @@ import {
   StyleSheet,
   TouchableOpacity,
   Alert,
-  TextInput,
   ScrollView,
   Image,
   KeyboardAvoidingView,
@@ -257,23 +256,23 @@ export const UploadContentScreen = () => {
               </CustomText>
             </View>
 
-        {/* Analyze Button */}
-        <TouchableOpacity
-          style={[styles.analyzeButton, !selectedMedia && styles.analyzeButtonDisabled]}
-          onPress={() =>
-            navigation.navigate(AppRoutes.FEEDBACK_MODE_SELECTION, {
-              media: selectedMedia!,
-              caption,
-            })
-          }
-          disabled={!selectedMedia || loading}>
-          <Ionicons name="analytics" size={20} color={Colors.white} />
-          <CustomText fontFamily="bold" style={styles.analyzeButtonText}>
-            Analyze Content
-          </CustomText>
-          <Ionicons name="arrow-forward" size={20} color={Colors.white} />
-        </TouchableOpacity>
-      </ScrollView>
+            {/* Analyze Button */}
+            <TouchableOpacity
+              style={[styles.analyzeButton, !selectedMedia && styles.analyzeButtonDisabled]}
+              onPress={() =>
+                navigation.navigate(AppRoutes.FEEDBACK_MODE_SELECTION, {
+                  media: selectedMedia!,
+                  caption,
+                })
+              }
+              disabled={!selectedMedia || loading}>
+              <Ionicons name="analytics" size={20} color={Colors.white} />
+              <CustomText fontFamily="bold" style={styles.analyzeButtonText}>
+                Analyze Content
+              </CustomText>
+              <Ionicons name="arrow-forward" size={20} color={Colors.white} />
+            </TouchableOpacity>
+        </ScrollView>
     </SafeAreaView>
   );
 };
