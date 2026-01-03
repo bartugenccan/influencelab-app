@@ -7,6 +7,7 @@ import { ModalScreen } from './ModalScreen';
 import { HomeDetail } from './HomeDetail';
 import { CameraScreen } from './CameraScreen';
 import { GalleryScreen } from './GalleryScreen';
+import { UploadContentScreen } from './UploadContentScreen';
 
 export {
   NonTabScreen,
@@ -18,4 +19,5 @@ export {
   HomeDetail,
   CameraScreen,
   GalleryScreen,
+  UploadContentScreen,
 };

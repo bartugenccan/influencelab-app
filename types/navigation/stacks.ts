@@ -14,6 +14,7 @@ export type HomeStackParamList = {
   [AppRoutes.HOME_DETAIL]: undefined;
   [AppRoutes.CAMERA]: undefined;
   [AppRoutes.GALLERY]: undefined;
+  [AppRoutes.UPLOAD_CONTENT]: undefined;
 };
 
 export type ProfileStackParamList = {
