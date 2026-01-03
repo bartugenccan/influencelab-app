@@ -7,7 +7,6 @@ import {
   TextInput,
   ScrollView,
   Image,
-  Platform,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import * as ImagePicker from 'expo-image-picker';
@@ -143,7 +142,7 @@ export const UploadContentScreen = () => {
       {/* Background Gradient */}
       <LinearGradient
         pointerEvents="none"
-        colors={['rgba(123, 0, 255, 0)', Colors.background]}
+        colors={['rgba(123, 0, 255, 0)', Colors.tabBar]}
         start={{ x: 0, y: 0.1 }}
         end={{ x: 0, y: 1 }}
         style={StyleSheet.absoluteFill}
@@ -203,7 +202,7 @@ export const UploadContentScreen = () => {
           <View style={styles.platformBox}>
             <View style={styles.platformContent}>
               <View style={styles.platformIcon}>
-                <Ionicons name="logo-instagram" size={24} color="#E4405F" />
+                <Ionicons name="logo-instagram" size={24} color={Colors.white} />
               </View>
               <View style={styles.platformInfo}>
                 <CustomText fontFamily="medium" style={styles.platformName}>
@@ -277,7 +276,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: scale(20),
-    paddingVertical: verticalScale(16),
+    paddingBottom: verticalScale(8)
   },
   backButton: {
     width: scale(40),
@@ -371,7 +370,7 @@ const styles = StyleSheet.create({
     borderRadius: scale(12),
     borderWidth: 1,
     borderColor: Colors.borderColor,
-    padding: scale(16),
+    padding: scale(8),
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',

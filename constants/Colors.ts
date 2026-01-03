@@ -8,7 +8,7 @@ export const Colors = {
   buttonColor: '#a413ec',
   iconColor: '#aa17fa',
   inputBackground: '#3d1e4d',
-  borderColor: '#bdbdbd',
+  borderColor: '#553366',
   audienceiconColor: '#63a5f7',
   buttonSectionBackground: '#251b2e',
   tabBar: '#1b1022',
