@@ -4,6 +4,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   Alert,
+  TextInput,
   ScrollView,
   Image,
   KeyboardAvoidingView,
@@ -256,23 +257,37 @@ export const UploadContentScreen = () => {
               </CustomText>
             </View>
 
-            {/* Analyze Button */}
-            <TouchableOpacity
-              style={[styles.analyzeButton, !selectedMedia && styles.analyzeButtonDisabled]}
-              onPress={() =>
-                navigation.navigate(AppRoutes.FEEDBACK_MODE_SELECTION, {
-                  media: selectedMedia!,
-                  caption,
-                })
-              }
-              disabled={!selectedMedia || loading}>
-              <Ionicons name="analytics" size={20} color={Colors.white} />
-              <CustomText fontFamily="bold" style={styles.analyzeButtonText}>
-                Analyze Content
-              </CustomText>
-              <Ionicons name="arrow-forward" size={20} color={Colors.white} />
-            </TouchableOpacity>
+            <TextInput
+              style={styles.captionInput}
+              placeholder="What's on your mind? The AI will analyze this tone to generate improvements..."
+              placeholderTextColor="#666"
+              multiline
+              maxLength={2200}
+              value={caption}
+              onChangeText={setCaption}
+              onFocus={handleCaptionFocus}
+              textAlignVertical="top"
+            />
+          </View>
+
+          {/* Analyze Button */}
+          <TouchableOpacity
+            style={[styles.analyzeButton, !selectedMedia && styles.analyzeButtonDisabled]}
+            onPress={() =>
+              navigation.navigate(AppRoutes.FEEDBACK_MODE_SELECTION, {
+                media: selectedMedia!,
+                caption,
+              })
+            }
+            disabled={!selectedMedia || loading}>
+            <Ionicons name="analytics" size={20} color={Colors.white} />
+            <CustomText fontFamily="bold" style={styles.analyzeButtonText}>
+              Analyze Content
+            </CustomText>
+            <Ionicons name="arrow-forward" size={20} color={Colors.white} />
+          </TouchableOpacity>
         </ScrollView>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 };
