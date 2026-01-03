@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import {
   View,
   StyleSheet,
@@ -7,6 +7,7 @@ import {
   TextInput,
   ScrollView,
   Image,
+  KeyboardAvoidingView,
   Platform,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -32,12 +33,20 @@ interface SelectedMedia {
 
 export const UploadContentScreen = () => {
   const navigation = useAppNavigation();
+  const scrollViewRef = useRef<ScrollView>(null);
 
   // State
   const [selectedMedia, setSelectedMedia] = useState<SelectedMedia | null>(null);
   const [platform, setPlatform] = useState<PlatformType>('instagram_feed');
   const [caption, setCaption] = useState('');
   const [loading, setLoading] = useState(false);
+
+  // Scroll to bottom when caption input is focused
+  const handleCaptionFocus = () => {
+    setTimeout(() => {
+      scrollViewRef.current?.scrollToEnd({ animated: true });
+    }, 300);
+  };
 
   // Request permissions
   const requestPermissions = async () => {
@@ -144,7 +153,7 @@ export const UploadContentScreen = () => {
       {/* Background Gradient */}
       <LinearGradient
         pointerEvents="none"
-        colors={['rgba(123, 0, 255, 0)', Colors.background]}
+        colors={['rgba(123, 0, 255, 0)', Colors.tabBar]}
         start={{ x: 0, y: 0.1 }}
         end={{ x: 0, y: 1 }}
         style={StyleSheet.absoluteFill}
@@ -166,91 +175,87 @@ export const UploadContentScreen = () => {
         <View style={styles.headerRight} />
       </View>
 
-      <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-        {/* Upload Section */}
-        <View style={styles.section}>
-          <CustomText fontFamily="semiBold" style={styles.sectionTitle}>
-            Upload Media
-          </CustomText>
-
-          {selectedMedia ? (
-            renderMediaPreview()
-          ) : (
-            <TouchableOpacity style={styles.uploadBox} onPress={handleSelectFile}>
-              <View style={styles.uploadIconContainer}>
-                <Ionicons name="cloud-upload" size={48} color={Colors.iconColor} />
-              </View>
-              <CustomText fontFamily="medium" style={styles.uploadTitle}>
-                Drag & drop or tap to browse
-              </CustomText>
-              <CustomText fontFamily="regular" style={styles.uploadSubtitle}>
-                Supports JPG, PNG, MP4
-              </CustomText>
-              <View style={styles.selectFileButton}>
-                <CustomText fontFamily="semiBold" style={styles.selectFileText}>
-                  Select File
-                </CustomText>
-              </View>
-            </TouchableOpacity>
-          )}
-        </View>
-
-        {/* Target Platform Section */}
-        <View style={styles.section}>
-          <CustomText fontFamily="semiBold" style={styles.sectionTitle}>
-            Target Platform
-          </CustomText>
-
-          <View style={styles.platformBox}>
-            <View style={styles.platformContent}>
-              <View style={styles.platformIcon}>
-                <Ionicons name="logo-instagram" size={24} color="#E4405F" />
-              </View>
-              <View style={styles.platformInfo}>
-                <CustomText fontFamily="medium" style={styles.platformName}>
-                  Instagram
-                </CustomText>
-                <CustomText fontFamily="regular" style={styles.platformSubtext}>
-                  FEED / REELS
-                </CustomText>
-              </View>
-            </View>
-            <View style={styles.lockBadge}>
-              <MaterialIcons name="lock" size={16} color={Colors.white} />
-            </View>
-          </View>
-
-          <CustomText fontFamily="regular" style={styles.platformNote}>
-            Currently optimized for Instagram algorithm. More platforms coming soon.
-          </CustomText>
-        </View>
-
-        {/* Caption Section */}
-        <View style={styles.section}>
-          <View style={styles.captionHeader}>
+      <KeyboardAvoidingView
+        style={styles.keyboardAvoidingView}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}>
+        <ScrollView
+          ref={scrollViewRef}
+          style={styles.content}
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled">
+          {/* Upload Section */}
+          <View style={styles.section}>
             <CustomText fontFamily="semiBold" style={styles.sectionTitle}>
-              Caption
-              <CustomText fontFamily="regular" style={styles.optionalLabel}>
-                {' '}
-                (Optional)
-              </CustomText>
+              Upload Media
             </CustomText>
-            <CustomText fontFamily="regular" style={styles.charCounter}>
-              {caption.length}/2200
+
+            {selectedMedia ? (
+              renderMediaPreview()
+            ) : (
+              <TouchableOpacity style={styles.uploadBox} onPress={handleSelectFile}>
+                <View style={styles.uploadIconContainer}>
+                  <Ionicons name="cloud-upload" size={48} color={Colors.iconColor} />
+                </View>
+                <CustomText fontFamily="medium" style={styles.uploadTitle}>
+                  Drag & drop or tap to browse
+                </CustomText>
+                <CustomText fontFamily="regular" style={styles.uploadSubtitle}>
+                  Supports JPG, PNG, MP4
+                </CustomText>
+                <View style={styles.selectFileButton}>
+                  <CustomText fontFamily="semiBold" style={styles.selectFileText}>
+                    Select File
+                  </CustomText>
+                </View>
+              </TouchableOpacity>
+            )}
+          </View>
+
+          {/* Target Platform Section */}
+          <View style={styles.section}>
+            <CustomText fontFamily="semiBold" style={styles.sectionTitle}>
+              Target Platform
+            </CustomText>
+
+            <View style={styles.platformBox}>
+              <View style={styles.platformContent}>
+                <View style={styles.platformIcon}>
+                  <Ionicons name="logo-instagram" size={24} color={Colors.white} />
+                </View>
+                <View style={styles.platformInfo}>
+                  <CustomText fontFamily="medium" style={styles.platformName}>
+                    Instagram
+                  </CustomText>
+                  <CustomText fontFamily="regular" style={styles.platformSubtext}>
+                    FEED / REELS
+                  </CustomText>
+                </View>
+              </View>
+              <View style={styles.lockBadge}>
+                <MaterialIcons name="lock" size={16} color={Colors.white} />
+              </View>
+            </View>
+
+            <CustomText fontFamily="regular" style={styles.platformNote}>
+              Currently optimized for Instagram algorithm. More platforms coming soon.
             </CustomText>
           </View>
 
-          <TextInput
-            style={styles.captionInput}
-            placeholder="What's on your mind? The AI will analyze this tone to generate improvements..."
-            placeholderTextColor="#666"
-            multiline
-            maxLength={2200}
-            value={caption}
-            onChangeText={setCaption}
-            textAlignVertical="top"
-          />
-        </View>
+          {/* Caption Section */}
+          <View style={styles.section}>
+            <View style={styles.captionHeader}>
+              <CustomText fontFamily="semiBold" style={styles.sectionTitle}>
+                Caption
+                <CustomText fontFamily="regular" style={styles.optionalLabel}>
+                  {' '}
+                  (Optional)
+                </CustomText>
+              </CustomText>
+              <CustomText fontFamily="regular" style={styles.charCounter}>
+                {caption.length}/2200
+              </CustomText>
+            </View>
 
         {/* Analyze Button */}
         <TouchableOpacity
@@ -278,12 +283,15 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: Colors.background,
   },
+  keyboardAvoidingView: {
+    flex: 1,
+  },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: scale(20),
-    paddingVertical: verticalScale(16),
+    paddingBottom: verticalScale(8)
   },
   backButton: {
     width: scale(40),
@@ -377,7 +385,7 @@ const styles = StyleSheet.create({
     borderRadius: scale(12),
     borderWidth: 1,
     borderColor: Colors.borderColor,
-    padding: scale(16),
+    padding: scale(8),
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
