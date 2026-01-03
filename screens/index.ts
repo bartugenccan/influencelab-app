@@ -8,6 +8,7 @@ import { HomeDetail } from './HomeDetail';
 import { CameraScreen } from './CameraScreen';
 import { GalleryScreen } from './GalleryScreen';
 import { UploadContentScreen } from './UploadContentScreen';
+import { FeedbackModeSelectionScreen } from './FeedbackModeSelectionScreen';
 
 export {
   NonTabScreen,
@@ -20,4 +21,5 @@ export {
   CameraScreen,
   GalleryScreen,
   UploadContentScreen,
+  FeedbackModeSelectionScreen,
 };

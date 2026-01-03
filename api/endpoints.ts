@@ -10,5 +10,8 @@ export const API_ENDPOINTS = {
     SETTINGS: '/user/settings',
     UPLOAD_CONTENT: '/user/upload-content',
   },
+  CONTENT: {
+    ANALYZE: '/api/analyze',
+  },
   // Add other endpoint groups
 } as const;

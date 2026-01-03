@@ -21,6 +21,7 @@ export enum AppRoutes {
   SETTINGS = 'Settings',
   SETTINGS_DETAIL = 'SettingsDetail',
   UPLOAD_CONTENT = 'UploadContent',
+  FEEDBACK_MODE_SELECTION = 'FeedbackModeSelection',
 }
 
 export enum TabRoutes {
