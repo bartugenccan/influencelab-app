@@ -32,6 +32,12 @@ export interface AnalyzeContentResponse {
 }
 
 const analyzeContent = async (data: AnalyzeContentRequest) => {
+  console.log('====================================');
+  console.log('Starting analyzeContent request...');
+  console.log('Media URI:', data.media.uri);
+  console.log('Analysis Type:', data.analysis_type);
+  console.log('====================================');
+
   const formData = new FormData();
 
   // Add media file
@@ -59,19 +65,33 @@ const analyzeContent = async (data: AnalyzeContentRequest) => {
     formData.append('persona', data.persona);
   }
 
-  const response = await axiosInstance.post<AnalyzeContentResponse>(
-    API_ENDPOINTS.CONTENT.ANALYZE,
-    formData,
-    {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
+  try {
+    console.log('Sending request to:', API_ENDPOINTS.CONTENT.ANALYZE);
+    const response = await axiosInstance.post<AnalyzeContentResponse>(
+      API_ENDPOINTS.CONTENT.ANALYZE,
+      formData,
+      {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      }
+    );
+    console.log('====================================');
+    console.log('Response received:', response.data);
+    console.log('====================================');
+    return response.data;
+  } catch (error: any) {
+    console.log('====================================');
+    console.log('Request failed!');
+    console.log('Error message:', error.message);
+    console.log('Error code:', error.code);
+    if (error.response) {
+      console.log('Response status:', error.response.status);
+      console.log('Response data:', error.response.data);
     }
-  );
-  console.log('====================================');
-  console.log(response.data);
-  console.log('====================================');
-  return response.data;
+    console.log('====================================');
+    throw error;
+  }
 };
 
 type AnalyzeContentMutationOptions = UseMutationOptions<

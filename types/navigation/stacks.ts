@@ -1,6 +1,7 @@
 import { NavigatorScreenParams, RouteProp } from '@react-navigation/native';
 import { AppRoutes, TabRoutes } from './routes';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import type { AnalyzeContentResponse } from '@/api/services/content.service';
 
 // Auth Stack
 export type AuthStackParamList = {
@@ -22,6 +23,23 @@ export type HomeStackParamList = {
       fileName?: string;
     };
     caption?: string;
+  };
+  [AppRoutes.ANALYSIS_LOADING]: {
+    media: {
+      uri: string;
+      type: 'image' | 'video';
+      fileName?: string;
+    };
+    caption?: string;
+    analysisType: 'coach' | 'persona';
+  };
+  [AppRoutes.ANALYSIS_RESULT]: {
+    result: AnalyzeContentResponse;
+    media: {
+      uri: string;
+      type: 'image' | 'video';
+      fileName?: string;
+    };
   };
 };
 

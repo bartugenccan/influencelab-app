@@ -168,9 +168,9 @@ export const UploadContentScreen = () => {
           <CustomText fontFamily="bold" style={styles.headerTitle}>
             New Analysis
           </CustomText>
-          <CustomText fontFamily="regular" style={styles.stepIndicator}>
+          {/*   <CustomText fontFamily="regular" style={styles.stepIndicator}>
             Step 1 of 3
-          </CustomText>
+          </CustomText> */}
         </View>
         <View style={styles.headerRight} />
       </View>

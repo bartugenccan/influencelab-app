@@ -5,6 +5,8 @@ import {
   CameraScreen,
   GalleryScreen,
   FeedbackModeSelectionScreen,
+  AnalysisLoadingScreen,
+  AnalysisResultScreen,
 } from '@/screens';
 import { AppRoutes, HomeStackParamList } from '@/types/navigation';
 import { UploadContentScreen } from '@/screens/UploadContentScreen';
@@ -22,6 +24,8 @@ export const HomeNavigator = () => {
         name={AppRoutes.FEEDBACK_MODE_SELECTION}
         component={FeedbackModeSelectionScreen}
       />
+      <Stack.Screen name={AppRoutes.ANALYSIS_LOADING} component={AnalysisLoadingScreen} />
+      <Stack.Screen name={AppRoutes.ANALYSIS_RESULT} component={AnalysisResultScreen} />
     </Stack.Navigator>
   );
 };

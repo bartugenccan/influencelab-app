@@ -16,8 +16,10 @@ const config: ExpoConfig = {
       NSPhotoLibraryUsageDescription:
         'This app needs access to your photo library to select clothing images.',
     },
+    bundleIdentifier: 'com.bartugenccan.influencelab',
   },
   android: {
+    package: 'com.bartugenccan.influencelab',
     adaptiveIcon: {
       foregroundImage: './assets/images/adaptive-icon.png',
       backgroundColor: '#ffffff',

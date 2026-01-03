@@ -10,7 +10,6 @@ import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import Entypo from '@expo/vector-icons/Entypo';
 import { Colors } from '@/constants/Colors';
 import { LinearGradient } from 'expo-linear-gradient';
-import { UploadContentScreen } from '../UploadContentScreen';
 
 export const HomeScreen = () => {
   const navigation = useAppNavigation();
