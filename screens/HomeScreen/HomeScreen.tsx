@@ -3,24 +3,25 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import React from 'react';
 import { useAppNavigation } from '@/hooks';
 import { Video, ResizeMode } from 'expo-av';
+import { AppRoutes } from '@/types/navigation';
 
 import Ionicons from '@expo/vector-icons/Ionicons';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import Entypo from '@expo/vector-icons/Entypo';
 import { Colors } from '@/constants/Colors';
-import { LinearGradient } from "expo-linear-gradient"
+import { LinearGradient } from 'expo-linear-gradient';
+import { UploadContentScreen } from '../UploadContentScreen';
 
 export const HomeScreen = () => {
   const navigation = useAppNavigation();
   return (
-    <SafeAreaView style={styles.container} edges={["top"]}>
-
+    <SafeAreaView style={styles.container} edges={['top']}>
       {/* 🌟 GLOBAL CENTER GLOW */}
       <LinearGradient
         pointerEvents="none"
         colors={[
           'rgba(123, 0, 255, 0)', // merkez
-          "#1b1022",       // kenarlar
+          '#1b1022', // kenarlar
         ]}
         start={{ x: 0, y: 0.1 }}
         end={{ x: 0, y: 1 }}
@@ -58,7 +59,7 @@ export const HomeScreen = () => {
           </View>
           {/* Right: AI Ready Badge */}
           <View style={styles.aiReadyBadge}>
-            <Text style={styles.aiReadyText}>AI  READY</Text>
+            <Text style={styles.aiReadyText}>AI READY</Text>
           </View>
         </View>
       </View>
@@ -72,13 +73,21 @@ export const HomeScreen = () => {
             <Text style={styles.pillText}>AI Coach</Text>
           </View>
           <View style={styles.pillButton}>
-            <MaterialCommunityIcons name="account-group" size={20} color={Colors.audienceiconColor} />
+            <MaterialCommunityIcons
+              name="account-group"
+              size={20}
+              color={Colors.audienceiconColor}
+            />
             <Text style={styles.pillText}>Audience Personas</Text>
           </View>
         </View>
 
         {/* Main Action Button */}
-        <TouchableOpacity style={styles.analyzeButton} onPress={() => { }}>
+        <TouchableOpacity
+          style={styles.analyzeButton}
+          onPress={() => {
+            navigation.navigate(AppRoutes.UPLOAD_CONTENT);
+          }}>
           <Entypo name="bar-graph" size={18} color="white" />
           <Text style={styles.buttonText}>Analyze My Content</Text>
         </TouchableOpacity>

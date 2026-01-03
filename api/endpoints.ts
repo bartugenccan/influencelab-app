@@ -8,6 +8,7 @@ export const API_ENDPOINTS = {
     PROFILE: '/user/profile',
     UPDATE_PROFILE: '/user/profile/update',
     SETTINGS: '/user/settings',
+    UPLOAD_CONTENT: '/user/upload-content',
   },
   // Add other endpoint groups
 } as const;

@@ -1,7 +1,7 @@
 import { createStackNavigator } from '@react-navigation/stack';
 import { HomeScreen, HomeDetail, CameraScreen, GalleryScreen } from '@/screens';
 import { AppRoutes, HomeStackParamList } from '@/types/navigation';
-
+import { UploadContentScreen } from '@/screens/UploadContentScreen';
 const Stack = createStackNavigator<HomeStackParamList>();
 
 export const HomeNavigator = () => {
@@ -11,6 +11,7 @@ export const HomeNavigator = () => {
       <Stack.Screen name={AppRoutes.HOME_DETAIL} component={HomeDetail} />
       <Stack.Screen name={AppRoutes.CAMERA} component={CameraScreen} />
       <Stack.Screen name={AppRoutes.GALLERY} component={GalleryScreen} />
+      <Stack.Screen name={AppRoutes.UPLOAD_CONTENT} component={UploadContentScreen} />
     </Stack.Navigator>
   );
 };
