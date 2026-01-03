@@ -9,6 +9,8 @@ import { CameraScreen } from './CameraScreen';
 import { GalleryScreen } from './GalleryScreen';
 import { UploadContentScreen } from './UploadContentScreen';
 import { FeedbackModeSelectionScreen } from './FeedbackModeSelectionScreen';
+import { AnalysisLoadingScreen } from './AnalysisLoadingScreen';
+import { AnalysisResultScreen } from './AnalysisResultScreen';
 
 export {
   NonTabScreen,
@@ -22,4 +24,6 @@ export {
   GalleryScreen,
   UploadContentScreen,
   FeedbackModeSelectionScreen,
+  AnalysisLoadingScreen,
+  AnalysisResultScreen,
 };

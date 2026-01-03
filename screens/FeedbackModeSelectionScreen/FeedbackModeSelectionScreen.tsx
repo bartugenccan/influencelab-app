@@ -5,20 +5,20 @@ import {
   View,
   Alert,
   Image,
-  SafeAreaView,
   ScrollView,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useState } from 'react';
 import { useRoute, type RouteProp } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
 
-import { useAnalyzeContentMutation } from '@/api/services/content.service';
 import { useAppNavigation } from '@/hooks';
 import { AppRoutes } from '@/types';
 import type { HomeStackParamList } from '@/types/navigation/stacks';
-import { LoadingOverlay } from '@/components';
+import { CustomText } from '@/components';
 import { Colors } from '@/constants/Colors';
 import { Ionicons } from '@expo/vector-icons';
+import { scale, verticalScale } from 'react-native-size-matters';
 
 type FeedbackModeSelectionRouteProp = RouteProp<
   HomeStackParamList,
@@ -32,17 +32,6 @@ export const FeedbackModeSelectionScreen = () => {
 
   const [selectedMode, setSelectedMode] = useState<'coach' | 'persona' | null>(null);
 
-  const { mutate: analyzeContent, isPending } = useAnalyzeContentMutation({
-    onSuccess: (response) => {
-      // Navigate to results screen or handle success
-      console.log('Analysis complete:', response);
-    },
-    onError: (error) => {
-      Alert.alert('Error', error.response?.data?.message || 'Failed to analyze content');
-      console.error('Analysis error:', error);
-    },
-  });
-
   const handleModeSelect = (mode: 'coach' | 'persona') => {
     setSelectedMode(mode);
   };
@@ -53,26 +42,43 @@ export const FeedbackModeSelectionScreen = () => {
       return;
     }
 
-    // Only submit if coach mode is selected
+    // Navigate to Analysis Loading screen
     if (selectedMode === 'coach') {
-      analyzeContent({
+      navigation.navigate(AppRoutes.ANALYSIS_LOADING, {
         media,
-        analysis_type: selectedMode,
         caption,
+        analysisType: selectedMode,
       });
     }
-    // Do nothing for persona mode
+    // Do nothing for persona mode for now
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      {isPending && <LoadingOverlay />}
+    <SafeAreaView style={styles.container} edges={['top']}>
 
+      {/* Background Gradient */}
+      <LinearGradient
+        pointerEvents="none"
+        colors={['rgba(123, 0, 255, 0)', Colors.tabBar]}
+        start={{ x: 0, y: 0.1 }}
+        end={{ x: 0, y: 1 }}
+        style={StyleSheet.absoluteFill}
+      />
+
+      {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
           <Ionicons name="arrow-back" size={24} color={Colors.white} />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>New Session</Text>
+        <View style={styles.headerCenter}>
+          <CustomText fontFamily="bold" style={styles.headerTitle}>
+            Choose Feedback Type
+          </CustomText>
+          <CustomText fontFamily="regular" style={styles.stepIndicator}>
+            Step 2 of 3
+          </CustomText>
+        </View>
+        <View style={styles.headerRight} />
       </View>
 
       <ScrollView
@@ -88,32 +94,36 @@ export const FeedbackModeSelectionScreen = () => {
             style={[styles.card, selectedMode === 'coach' && styles.cardSelected, styles.coachCard]}
             onPress={() => handleModeSelect('coach')}
             activeOpacity={0.8}>
-            <LinearGradient
-              colors={['#4a1a5a', '#2a0a3a']}
-              style={styles.cardGradient}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 1 }}>
+            <View style={styles.cardGradient}>
               {selectedMode === 'coach' && (
                 <View style={styles.checkmarkContainer}>
                   <Text style={styles.checkmark}>✓</Text>
                 </View>
               )}
-              <Image
-                source={require('@/assets/images/ai-coach.png')}
-                style={styles.cardImage}
-                resizeMode="cover"
-              />
-              <View style={styles.cardContent}>
-                <View style={styles.cardIcon}>
-                  <Text style={styles.cardIconText}>✨</Text>
+              <View style={styles.imageContainer}>
+                <Image
+                  source={require('@/assets/images/ai-coach.png')}
+                  style={styles.cardImage}
+                  resizeMode="cover"
+                />
+                <View style={styles.cardIconOverlay}>
+                  <Ionicons name="bar-chart" size={24} color={Colors.borderColor} />
                 </View>
+                <LinearGradient
+                  colors={['transparent', '#211328']}
+                  style={styles.imageOverlay}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 0, y: 1 }}
+                />
+              </View>
+              <View style={styles.cardContent}>
                 <Text style={styles.cardTitle}>AI Influencer Coach</Text>
                 <Text style={styles.cardDescription}>
                   Expert feedback based on viral growth principles and algorithm trends. Best for
                   growth strategy.
                 </Text>
               </View>
-            </LinearGradient>
+            </View>
           </TouchableOpacity>
 
           {/* Audience Persona Sim Card */}
@@ -125,42 +135,46 @@ export const FeedbackModeSelectionScreen = () => {
             ]}
             onPress={() => handleModeSelect('persona')}
             activeOpacity={0.8}>
-            <LinearGradient
-              colors={['#1a3a4a', '#0a2a3a']}
-              style={styles.cardGradient}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 1 }}>
+            <View style={styles.cardGradient}>
               {selectedMode === 'persona' && (
                 <View style={styles.checkmarkContainer}>
                   <Text style={styles.checkmark}>✓</Text>
                 </View>
               )}
-              <Image
-                source={require('@/assets/images/persona-sim.png')}
-                style={styles.cardImage}
-                resizeMode="cover"
-              />
-              <View style={styles.cardContent}>
-                <View style={[styles.cardIcon, styles.personaIcon]}>
-                  <Text style={styles.cardIconText}>👥</Text>
+              <View style={styles.imageContainer}>
+                <Image
+                  source={require('@/assets/images/persona-sim.png')}
+                  style={styles.cardImage}
+                  resizeMode="cover"
+                />
+                <View style={[styles.cardIconOverlay, styles.personaIconOverlay]}>
+                  <Ionicons name="people" size={24} color="rgba(255, 255, 255, 0.5)" />
                 </View>
+                <LinearGradient
+                  colors={['transparent', '#211328']}
+                  style={styles.imageOverlay}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 0, y: 1 }}
+                />
+              </View>
+              <View style={styles.cardContent}>
                 <Text style={styles.cardTitle}>Audience Persona Sim</Text>
                 <Text style={styles.cardDescription}>
                   See how your target audience reacts emotionally before you post. Best for
                   engagement optimization.
                 </Text>
               </View>
-            </LinearGradient>
+            </View>
           </TouchableOpacity>
         </View>
 
         <TouchableOpacity
           onPress={handleSubmit}
-          disabled={!selectedMode || isPending}
-          style={[styles.submitButton, (!selectedMode || isPending) && styles.submitButtonDisabled]}
+          disabled={!selectedMode}
+          style={[styles.submitButton, !selectedMode && styles.submitButtonDisabled]}
           activeOpacity={0.8}>
           <LinearGradient
-            colors={selectedMode && !isPending ? ['#a413ec', '#7a0fbc'] : ['#555', '#444']}
+            colors={selectedMode ? ['#a413ec', '#7a0fbc'] : ['#555', '#444']}
             style={styles.submitButtonGradient}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 0 }}>
@@ -181,25 +195,31 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 20,
-    paddingVertical: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.borderColor,
+    justifyContent: 'space-between',
+    paddingHorizontal: scale(20),
+    paddingBottom: verticalScale(8)
   },
   backButton: {
-    padding: 8,
+    width: scale(40),
+    height: scale(40),
+    justifyContent: 'center',
+    alignItems: 'flex-start',
   },
-  backButtonText: {
-    fontSize: 24,
-    color: Colors.white,
+  headerCenter: {
+    flex: 1,
+    alignItems: 'center',
+  },
+  headerRight: {
+    width: scale(40),
   },
   headerTitle: {
-    fontSize: 18,
-    fontWeight: '600',
+    fontSize: scale(18),
     color: Colors.white,
-    flex: 1,
-    textAlign: 'center',
-    marginRight: 40,
+  },
+  stepIndicator: {
+    fontSize: scale(12),
+    color: Colors.iconColor,
+    marginTop: verticalScale(2),
   },
   scrollView: {
     flex: 1,
@@ -240,6 +260,7 @@ const styles = StyleSheet.create({
   cardGradient: {
     padding: 0,
     position: 'relative',
+    backgroundColor: '#211328',
   },
   checkmarkContainer: {
     position: 'absolute',
@@ -258,12 +279,42 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
   },
-  cardImage: {
+  imageContainer: {
+    position: 'relative',
     width: '100%',
     height: 120,
   },
+  cardImage: {
+    width: '100%',
+    height: '100%',
+  },
+  cardIconOverlay: {
+    position: 'absolute',
+    top: 12,
+    left: 12,
+    width: 36,
+    height: 36,
+    borderRadius: 8,
+    backgroundColor: Colors.black,
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 5,
+    borderWidth: 1,
+    borderColor: Colors.borderColor
+  },
+  personaIconOverlay: {
+    backgroundColor: 'rgba(80, 97, 118, 0.3)',
+  },
+  imageOverlay: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: 50,
+  },
   cardContent: {
     padding: 12,
+    backgroundColor: '#211328',
   },
   cardIcon: {
     width: 30,
@@ -309,7 +360,8 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
     color: Colors.white,
-    marginLeft: 8,
     marginBottom: 2,
+    marginHorizontal: scale(8)
   },
 });
+
