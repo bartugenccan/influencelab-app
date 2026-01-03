@@ -15,6 +15,14 @@ export type HomeStackParamList = {
   [AppRoutes.CAMERA]: undefined;
   [AppRoutes.GALLERY]: undefined;
   [AppRoutes.UPLOAD_CONTENT]: undefined;
+  [AppRoutes.FEEDBACK_MODE_SELECTION]: {
+    media: {
+      uri: string;
+      type: 'image' | 'video';
+      fileName?: string;
+    };
+    caption?: string;
+  };
 };
 
 export type ProfileStackParamList = {

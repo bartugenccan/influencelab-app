@@ -20,6 +20,7 @@ import { scale, verticalScale } from 'react-native-size-matters';
 import { CustomText, LoadingOverlay } from '@/components';
 import { Colors } from '@/constants/Colors';
 import { useAppNavigation } from '@/hooks';
+import { AppRoutes } from '@/types';
 
 type PlatformType = 'instagram_feed' | 'instagram_reels';
 
@@ -254,7 +255,12 @@ export const UploadContentScreen = () => {
         {/* Analyze Button */}
         <TouchableOpacity
           style={[styles.analyzeButton, !selectedMedia && styles.analyzeButtonDisabled]}
-          onPress={handleAnalyze}
+          onPress={() =>
+            navigation.navigate(AppRoutes.FEEDBACK_MODE_SELECTION, {
+              media: selectedMedia!,
+              caption,
+            })
+          }
           disabled={!selectedMedia || loading}>
           <Ionicons name="analytics" size={20} color={Colors.white} />
           <CustomText fontFamily="bold" style={styles.analyzeButtonText}>
