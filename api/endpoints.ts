@@ -13,5 +13,9 @@ export const API_ENDPOINTS = {
   CONTENT: {
     ANALYZE: '/api/analyze',
   },
+  PERSONA: {
+    GET_TEMPLATES: '/api/persona-templates/free',
+  },
+
   // Add other endpoint groups
 } as const;

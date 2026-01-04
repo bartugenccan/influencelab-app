@@ -7,6 +7,7 @@ import {
   FeedbackModeSelectionScreen,
   AnalysisLoadingScreen,
   AnalysisResultScreen,
+  PersonaTemplatesScreen,
 } from '@/screens';
 import { AppRoutes, HomeStackParamList } from '@/types/navigation';
 import { UploadContentScreen } from '@/screens/UploadContentScreen';
@@ -26,6 +27,7 @@ export const HomeNavigator = () => {
       />
       <Stack.Screen name={AppRoutes.ANALYSIS_LOADING} component={AnalysisLoadingScreen} />
       <Stack.Screen name={AppRoutes.ANALYSIS_RESULT} component={AnalysisResultScreen} />
+      <Stack.Screen name={AppRoutes.PERSONA_TEMPLATES} component={PersonaTemplatesScreen} />
     </Stack.Navigator>
   );
 };
