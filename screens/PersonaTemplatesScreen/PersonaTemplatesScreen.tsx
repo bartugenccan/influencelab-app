@@ -5,19 +5,36 @@ import {
   TextInput,
   ScrollView,
   ActivityIndicator,
+  Image,
+  Platform,
 } from 'react-native';
 import React, { useEffect, useState } from 'react';
+import { LinearGradient } from 'expo-linear-gradient';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { getPersonaTemplates, PersonaTemplateResponse, PersonaTemplate } from '@/api';
 import { CustomText } from '@/components';
 import { Colors } from '@/constants/Colors';
 import { Typography } from '@/constants/Typography';
 import { Ionicons } from '@expo/vector-icons';
+import { scale, verticalScale } from 'react-native-size-matters';
+import { useAppNavigation } from '@/hooks';
+
+// Define a palette of vibrant/matching colors for the cards
+const CARD_COLORS = [
+  { primary: '#FF6B6B', bg: 'rgba(255, 107, 107, 0.2)' }, // Red/Coral
+  { primary: '#4ECDC4', bg: 'rgba(78, 205, 196, 0.2)' }, // Teal
+  { primary: '#45B7D1', bg: 'rgba(69, 183, 209, 0.2)' }, // Blue
+  { primary: '#96CEB4', bg: 'rgba(150, 206, 180, 0.2)' }, // Sage
+  { primary: '#FFEEAD', bg: 'rgba(255, 238, 173, 0.2)' }, // Yellow
+  { primary: '#D4A5A5', bg: 'rgba(212, 165, 165, 0.2)' }, // Pinkish
+];
 
 export const PersonaTemplatesScreen = () => {
   const [personaTemplates, setPersonaTemplates] = useState<PersonaTemplateResponse | null>(null);
   const [selectedPersona, setSelectedPersona] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [loading, setLoading] = useState(true);
+  const navigation = useAppNavigation();
 
   useEffect(() => {
     const fetchPersonas = async () => {
@@ -25,7 +42,7 @@ export const PersonaTemplatesScreen = () => {
         const data = await getPersonaTemplates();
         setPersonaTemplates(data);
       } catch (error) {
-        console.error('Failed to fetch personas:', error);
+        console.error('Failed to fetch persona templates:', error);
       } finally {
         setLoading(false);
       }
@@ -37,13 +54,13 @@ export const PersonaTemplatesScreen = () => {
   const getPersonaIcon = (title: string) => {
     const lowerTitle = title.toLowerCase();
     if (lowerTitle.includes('student') || lowerTitle.includes('gen z')) {
-      return 'school-outline';
+      return 'school';
     } else if (lowerTitle.includes('professional') || lowerTitle.includes('busy')) {
-      return 'briefcase-outline';
+      return 'briefcase';
     } else if (lowerTitle.includes('fitness') || lowerTitle.includes('health')) {
-      return 'fitness-outline';
+      return 'barbell';
     }
-    return 'person-outline';
+    return 'person';
   };
 
   const filteredTemplates = personaTemplates?.templates.filter((template) =>
@@ -53,108 +70,160 @@ export const PersonaTemplatesScreen = () => {
   const handleStartSimulation = () => {
     if (selectedPersona) {
       // Handle navigation or simulation start
-      console.log('Starting simulation with persona:', selectedPersona);
+      console.log('Starting simulation with persona template:', selectedPersona);
     }
   };
 
+  const PersonaTemplateCard = ({
+    template,
+    isSelected,
+    onSelect,
+    index,
+  }: {
+    template: PersonaTemplate;
+    isSelected: boolean;
+    onSelect: () => void;
+    index: number;
+  }) => {
+    // Pick consistent color based on index
+    const colorTheme = CARD_COLORS[index % CARD_COLORS.length];
+
+    return (
+      <TouchableOpacity
+        activeOpacity={0.9}
+        onPress={onSelect}
+        style={[styles.cardContainer, isSelected && styles.cardContainerSelected]}>
+        <View style={styles.cardContent}>
+          {/* Header Row: Icon + Title + Radio */}
+          <View style={styles.cardHeader}>
+            <View style={styles.cardTitleRow}>
+              <View style={[styles.iconContainer, { backgroundColor: colorTheme.bg }]}>
+                <Ionicons
+                  name={getPersonaIcon(template.title) as any}
+                  size={20}
+                  color={colorTheme.primary}
+                />
+              </View>
+              <CustomText style={styles.cardTitle} fontFamily="bold">
+                {template.title}
+              </CustomText>
+            </View>
+
+            <View style={styles.radioContainer}>
+              {isSelected ? (
+                <Ionicons name="checkmark-circle" size={24} color="#A020F0" />
+              ) : (
+                <View style={styles.radioUnselected} />
+              )}
+            </View>
+          </View>
+
+          {/* Age Badge */}
+          <View style={[styles.ageBadge, { backgroundColor: colorTheme.bg }]}>
+            <CustomText style={[styles.ageText, { color: colorTheme.primary }]} fontFamily="medium">
+              {template.age_range} years
+            </CustomText>
+          </View>
+
+          {/* Description */}
+          <CustomText style={styles.cardDescription} numberOfLines={3}>
+            {template.description}
+          </CustomText>
+        </View>
+      </TouchableOpacity>
+    );
+  };
+
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container} edges={['top']}>
+      {/* Background Gradient */}
+      <LinearGradient
+        pointerEvents="none"
+        colors={['rgba(123, 0, 255, 0)', Colors.tabBar]}
+        start={{ x: 0, y: 0.1 }}
+        end={{ x: 0, y: 1 }}
+        style={StyleSheet.absoluteFill}
+      />
+
       {/* Header */}
       <View style={styles.header}>
-        <TouchableOpacity style={styles.backButton}>
+        <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
           <Ionicons name="chevron-back" size={24} color={Colors.white} />
         </TouchableOpacity>
-        <CustomText style={styles.headerTitle} fontFamily="semiBold">
+        <CustomText style={styles.headerTitle} fontFamily="bold">
           Target Audience
         </CustomText>
-        <View style={styles.progressIndicator}>
-          <View style={styles.progressDot} />
-          <View style={[styles.progressDot, styles.progressDotActive]} />
-          <View style={styles.progressDot} />
+        {/* Placeholder for center alignment if needed, or just empty view */}
+        <View style={styles.headerRightSpacer} />
+      </View>
+
+      <ScrollView
+        style={styles.scrollView}
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}>
+        {/* Title Section */}
+        <View style={styles.titleSection}>
+          <CustomText style={styles.pageTitle} fontFamily="bold">
+            Who are you trying to reach?
+          </CustomText>
+          <CustomText style={styles.pageSubtitle}>
+            Select a persona for the AI to simulate interactions with. This helps tailor your content
+            strategy.
+          </CustomText>
         </View>
-      </View>
 
-      {/* Title Section */}
-      <View style={styles.titleSection}>
-        <CustomText style={styles.title} fontFamily="bold">
-          Who are you trying to reach?
-        </CustomText>
-        <CustomText style={styles.subtitle}>
-          Select a persona for the AI to simulate interactions with. This helps tailor your content
-          strategy.
-        </CustomText>
-      </View>
+        {/* Search Bar */}
+        <View style={styles.searchContainer}>
+          <Ionicons name="search" size={20} color="#aa17fa" style={styles.searchIcon} />
+          <TextInput
+            style={styles.searchInput}
+            placeholder="Search personas (e.g., Gen Z, Tech)."
+            placeholderTextColor="#8b7d94"
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+          />
+        </View>
 
-      {/* Search Bar */}
-      <View style={styles.searchContainer}>
-        <Ionicons name="search" size={20} color="#aa17fa" style={styles.searchIcon} />
-        <TextInput
-          style={styles.searchInput}
-          placeholder="Search personas (e.g., Gen Z, Tech)..."
-          placeholderTextColor="#8b7d94"
-          value={searchQuery}
-          onChangeText={setSearchQuery}
-        />
-      </View>
-
-      {/* Persona List */}
-      <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
+        {/* Templates List */}
         {loading ? (
-          <ActivityIndicator size="large" color={Colors.buttonColor} style={styles.loader} />
+          <ActivityIndicator size="large" color="#A020F0" style={styles.loader} />
         ) : (
-          <View style={styles.personaList}>
-            {filteredTemplates?.map((template) => (
-              <TouchableOpacity
+          <View style={styles.listContainer}>
+            {filteredTemplates?.map((template, index) => (
+              <PersonaTemplateCard
                 key={template.id}
-                style={[
-                  styles.personaCard,
-                  selectedPersona === template.id && styles.personaCardSelected,
-                ]}
-                onPress={() => setSelectedPersona(template.id)}
-                activeOpacity={0.7}>
-                <View style={styles.personaIcon}>
-                  <Ionicons
-                    name={getPersonaIcon(template.title) as any}
-                    size={24}
-                    color={Colors.audienceiconColor}
-                  />
-                </View>
-                <View style={styles.personaContent}>
-                  <View style={styles.personaHeader}>
-                    <CustomText style={styles.personaTitle} fontFamily="semiBold">
-                      {template.title}
-                    </CustomText>
-                    <CustomText style={styles.personaAge}>{template.age_range}</CustomText>
-                  </View>
-                  <CustomText style={styles.personaDescription}>{template.description}</CustomText>
-                </View>
-                <View style={styles.selectionIndicator}>
-                  {selectedPersona === template.id ? (
-                    <Ionicons name="checkmark-circle" size={24} color={Colors.buttonColor} />
-                  ) : (
-                    <View style={styles.unselectedCircle} />
-                  )}
-                </View>
-              </TouchableOpacity>
+                template={template}
+                isSelected={selectedPersona === template.id}
+                onSelect={() => setSelectedPersona(template.id)}
+                index={index}
+              />
             ))}
           </View>
         )}
+
+        {/* Bottom Spacer for Button */}
+        <View style={{ height: 100 }} />
       </ScrollView>
 
-      {/* Start Simulation Button */}
+      {/* Fixed Bottom Button */}
       <View style={styles.buttonContainer}>
         <TouchableOpacity
-          style={[styles.startButton, !selectedPersona && styles.startButtonDisabled]}
+          activeOpacity={0.8}
           onPress={handleStartSimulation}
-          disabled={!selectedPersona}
-          activeOpacity={0.8}>
-          <CustomText style={styles.startButtonText} fontFamily="semiBold">
-            Start Simulation
-          </CustomText>
-          <Ionicons name="arrow-forward" size={20} color={Colors.white} />
+          disabled={!selectedPersona}>
+          <LinearGradient
+            colors={selectedPersona ? ['#B040FF', '#8000FF'] : ['#4a4a4a', '#3a3a3a']}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 0 }}
+            style={[styles.startButton, !selectedPersona && styles.startButtonDisabled]}>
+            <CustomText style={styles.startButtonText} fontFamily="bold">
+              Start Simulation
+            </CustomText>
+            <Ionicons name="arrow-forward" size={20} color={Colors.white} />
+          </LinearGradient>
         </TouchableOpacity>
       </View>
-    </View>
+    </SafeAreaView>
   );
 };
 
@@ -168,8 +237,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: 20,
-    paddingTop: 60,
-    paddingBottom: 20,
+    paddingVertical: 10,
   },
   backButton: {
     width: 40,
@@ -178,148 +246,155 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
   },
   headerTitle: {
-    fontSize: 16,
+    fontSize: 18, // Increased size to match standard headers
     color: Colors.white,
   },
-  progressIndicator: {
-    flexDirection: 'row',
-    gap: 8,
+  headerRightSpacer: {
+    width: 40,
   },
-  progressDot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: '#4a2f5c',
+  scrollView: {
+    flex: 1,
   },
-  progressDotActive: {
-    backgroundColor: Colors.buttonColor,
+  scrollContent: {
+    paddingTop: 20,
   },
   titleSection: {
     paddingHorizontal: 20,
     marginBottom: 24,
   },
-  title: {
+  pageTitle: {
     fontSize: 28,
     color: Colors.white,
     marginBottom: 12,
     lineHeight: 34,
   },
-  subtitle: {
-    fontSize: 14,
-    color: '#b8a5c5',
-    lineHeight: 20,
+  pageSubtitle: {
+    fontSize: 15,
+    color: '#8b7d94',
+    lineHeight: 22,
   },
   searchContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.inputBackground,
+    backgroundColor: '#1E1428', // Darker purple-ish background
     marginHorizontal: 20,
     borderRadius: 12,
     paddingHorizontal: 16,
     marginBottom: 24,
-    borderWidth: 1,
-    borderColor: Colors.borderColor,
+    height: 50,
   },
   searchIcon: {
-    marginRight: 12,
+    marginRight: 10,
+    color: '#D49EFF', // Lighter purple for icon
   },
   searchInput: {
     flex: 1,
-    height: 48,
+    height: '100%',
     color: Colors.white,
-    fontSize: 14,
+    fontSize: 15,
     fontFamily: Typography.fontFamily.regular,
   },
-  scrollView: {
-    flex: 1,
+  loader: {
+    marginTop: 40,
   },
-  personaList: {
+  listContainer: {
     paddingHorizontal: 20,
-    paddingBottom: 100,
+    gap: 16,
   },
-  personaCard: {
-    flexDirection: 'row',
-    backgroundColor: Colors.inputBackground,
+  // Card Styles
+  cardContainer: {
+    backgroundColor: '#1E1428',
     borderRadius: 16,
     padding: 16,
-    marginBottom: 16,
-    borderWidth: 2,
+    borderWidth: 1,
     borderColor: 'transparent',
   },
-  personaCardSelected: {
-    borderColor: Colors.buttonColor,
-    backgroundColor: '#4a2559',
+  cardContainerSelected: {
+    borderColor: '#A020F0', // Purple border
+    // Enhanced Glow effect matching AnalysisResultScreen
+    shadowColor: '#A413EC',
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.6,
+    shadowRadius: 15,
+    elevation: 12,
   },
-  personaIcon: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    backgroundColor: '#2d3d5e',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 12,
+  cardContent: {
+    gap: 8,
   },
-  personaContent: {
-    flex: 1,
+  cardHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
   },
-  personaHeader: {
+  cardTitleRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 4,
+    gap: 12,
   },
-  personaTitle: {
-    fontSize: 16,
-    color: Colors.white,
-    marginRight: 8,
-  },
-  personaAge: {
-    fontSize: 12,
-    color: '#8b7d94',
-  },
-  personaDescription: {
-    fontSize: 13,
-    color: '#b8a5c5',
-    lineHeight: 18,
-  },
-  selectionIndicator: {
+  iconContainer: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
     justifyContent: 'center',
     alignItems: 'center',
-    marginLeft: 8,
   },
-  unselectedCircle: {
+  cardTitle: {
+    fontSize: 17,
+    color: Colors.white,
+  },
+  radioContainer: {
+    paddingLeft: 10,
+  },
+  radioUnselected: {
     width: 24,
     height: 24,
     borderRadius: 12,
     borderWidth: 2,
-    borderColor: '#5a4668',
+    borderColor: '#4a4a4a',
   },
+  ageBadge: {
+    alignSelf: 'flex-start',
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 6,
+    marginLeft: 52, // Align with text start (icon width + gap)
+    marginTop: -4,
+    marginBottom: 4,
+  },
+  ageText: {
+    fontSize: 12,
+  },
+  cardDescription: {
+    fontSize: 14,
+    color: '#8b7d94',
+    lineHeight: 20,
+    marginLeft: 52, // Align with text start
+  },
+  // Button Styles
   buttonContainer: {
     position: 'absolute',
     bottom: 0,
     left: 0,
     right: 0,
     paddingHorizontal: 20,
-    paddingBottom: 40,
-    paddingTop: 16,
-    backgroundColor: Colors.background,
+    paddingBottom: Platform.OS === 'ios' ? 0 : 20, // Safe area handles padding on iOS
+    backgroundColor: 'transparent',
   },
   startButton: {
     flexDirection: 'row',
-    backgroundColor: Colors.buttonColor,
-    borderRadius: 12,
     height: 56,
+    borderRadius: 12,
     justifyContent: 'center',
     alignItems: 'center',
     gap: 8,
+    marginBottom: 20,
+    marginTop: 10,
   },
   startButtonDisabled: {
-    opacity: 0.5,
+    opacity: 0.7,
   },
   startButtonText: {
     fontSize: 16,
     color: Colors.white,
-  },
-  loader: {
-    marginTop: 40,
   },
 });
