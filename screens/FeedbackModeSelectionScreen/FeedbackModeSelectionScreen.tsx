@@ -1,12 +1,4 @@
-import {
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-  Alert,
-  Image,
-  ScrollView,
-} from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View, Alert, Image, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useState } from 'react';
 import { useRoute, type RouteProp } from '@react-navigation/native';
@@ -49,13 +41,14 @@ export const FeedbackModeSelectionScreen = () => {
         caption,
         analysisType: selectedMode,
       });
+    } else if (selectedMode === 'persona') {
+      navigation.navigate(AppRoutes.PERSONA_TEMPLATES);
     }
     // Do nothing for persona mode for now
   };
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
-
       {/* Background Gradient */}
       <LinearGradient
         pointerEvents="none"
@@ -197,7 +190,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: scale(20),
-    paddingBottom: verticalScale(8)
+    paddingBottom: verticalScale(8),
   },
   backButton: {
     width: scale(40),
@@ -300,7 +293,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     zIndex: 5,
     borderWidth: 1,
-    borderColor: Colors.borderColor
+    borderColor: Colors.borderColor,
   },
   personaIconOverlay: {
     backgroundColor: 'rgba(80, 97, 118, 0.3)',
@@ -361,7 +354,6 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: Colors.white,
     marginBottom: 2,
-    marginHorizontal: scale(8)
+    marginHorizontal: scale(8),
   },
 });
-

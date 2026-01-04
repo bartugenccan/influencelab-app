@@ -16,6 +16,7 @@ export type HomeStackParamList = {
   [AppRoutes.CAMERA]: undefined;
   [AppRoutes.GALLERY]: undefined;
   [AppRoutes.UPLOAD_CONTENT]: undefined;
+  [AppRoutes.PERSONA_TEMPLATES]: undefined;
   [AppRoutes.FEEDBACK_MODE_SELECTION]: {
     media: {
       uri: string;

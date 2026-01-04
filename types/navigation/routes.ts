@@ -24,6 +24,7 @@ export enum AppRoutes {
   FEEDBACK_MODE_SELECTION = 'FeedbackModeSelection',
   ANALYSIS_LOADING = 'AnalysisLoading',
   ANALYSIS_RESULT = 'AnalysisResult',
+  PERSONA_TEMPLATES = 'PersonaTemplates',
 }
 
 export enum TabRoutes {

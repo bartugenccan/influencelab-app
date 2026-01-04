@@ -11,6 +11,7 @@ import { UploadContentScreen } from './UploadContentScreen';
 import { FeedbackModeSelectionScreen } from './FeedbackModeSelectionScreen';
 import { AnalysisLoadingScreen } from './AnalysisLoadingScreen';
 import { AnalysisResultScreen } from './AnalysisResultScreen';
+import { PersonaTemplatesScreen } from './PersonaTemplatesScreen';
 
 export {
   NonTabScreen,
@@ -26,4 +27,5 @@ export {
   FeedbackModeSelectionScreen,
   AnalysisLoadingScreen,
   AnalysisResultScreen,
+  PersonaTemplatesScreen,
 };
