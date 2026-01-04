@@ -236,76 +236,76 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 20,
-    paddingVertical: 10,
+    paddingHorizontal: scale(20),
+    paddingVertical: verticalScale(10),
   },
   backButton: {
-    width: 40,
-    height: 40,
+    width: scale(40),
+    height: scale(40),
     justifyContent: 'center',
     alignItems: 'flex-start',
   },
   headerTitle: {
-    fontSize: 18, // Increased size to match standard headers
+    fontSize: scale(18),
     color: Colors.white,
   },
   headerRightSpacer: {
-    width: 40,
+    width: scale(40),
   },
   scrollView: {
     flex: 1,
   },
   scrollContent: {
-    paddingTop: 20,
+    paddingTop: verticalScale(20),
   },
   titleSection: {
-    paddingHorizontal: 20,
-    marginBottom: 24,
+    paddingHorizontal: scale(20),
+    marginBottom: verticalScale(24),
   },
   pageTitle: {
-    fontSize: 28,
+    fontSize: scale(28),
     color: Colors.white,
-    marginBottom: 12,
-    lineHeight: 34,
+    marginBottom: verticalScale(12),
+    lineHeight: verticalScale(34),
   },
   pageSubtitle: {
-    fontSize: 15,
+    fontSize: scale(15),
     color: '#8b7d94',
-    lineHeight: 22,
+    lineHeight: verticalScale(22),
   },
   searchContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#1E1428', // Darker purple-ish background
-    marginHorizontal: 20,
-    borderRadius: 12,
-    paddingHorizontal: 16,
-    marginBottom: 24,
-    height: 50,
+    marginHorizontal: scale(20),
+    borderRadius: scale(12),
+    paddingHorizontal: scale(16),
+    marginBottom: verticalScale(24),
+    height: verticalScale(50),
   },
   searchIcon: {
-    marginRight: 10,
+    marginRight: scale(10),
     color: '#D49EFF', // Lighter purple for icon
   },
   searchInput: {
     flex: 1,
     height: '100%',
     color: Colors.white,
-    fontSize: 15,
+    fontSize: scale(15),
     fontFamily: Typography.fontFamily.regular,
   },
   loader: {
-    marginTop: 40,
+    marginTop: verticalScale(40),
   },
   listContainer: {
-    paddingHorizontal: 20,
-    gap: 16,
+    paddingHorizontal: scale(20),
+    gap: verticalScale(16),
   },
   // Card Styles
   cardContainer: {
     backgroundColor: '#1E1428',
-    borderRadius: 16,
-    padding: 16,
+    borderRadius: scale(16),
+    padding: scale(16),
     borderWidth: 1,
     borderColor: 'transparent',
   },
@@ -315,11 +315,11 @@ const styles = StyleSheet.create({
     shadowColor: '#A413EC',
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.6,
-    shadowRadius: 15,
+    shadowRadius: scale(15),
     elevation: 12,
   },
   cardContent: {
-    gap: 8,
+    gap: verticalScale(8),
   },
   cardHeader: {
     flexDirection: 'row',
@@ -329,46 +329,46 @@ const styles = StyleSheet.create({
   cardTitleRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 12,
+    gap: scale(12),
   },
   iconContainer: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+    width: scale(40),
+    height: scale(40),
+    borderRadius: scale(20),
     justifyContent: 'center',
     alignItems: 'center',
   },
   cardTitle: {
-    fontSize: 17,
+    fontSize: scale(17),
     color: Colors.white,
   },
   radioContainer: {
-    paddingLeft: 10,
+    paddingLeft: scale(10),
   },
   radioUnselected: {
-    width: 24,
-    height: 24,
-    borderRadius: 12,
+    width: scale(24),
+    height: scale(24),
+    borderRadius: scale(12),
     borderWidth: 2,
     borderColor: '#4a4a4a',
   },
   ageBadge: {
     alignSelf: 'flex-start',
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 6,
-    marginLeft: 52, // Align with text start (icon width + gap)
-    marginTop: -4,
-    marginBottom: 4,
+    paddingHorizontal: scale(10),
+    paddingVertical: verticalScale(4),
+    borderRadius: scale(6),
+    marginLeft: scale(52), // Align with text start (icon width + gap)
+    marginTop: verticalScale(-4),
+    marginBottom: verticalScale(4),
   },
   ageText: {
-    fontSize: 12,
+    fontSize: scale(12),
   },
   cardDescription: {
-    fontSize: 14,
+    fontSize: scale(14),
     color: '#8b7d94',
-    lineHeight: 20,
-    marginLeft: 52, // Align with text start
+    lineHeight: verticalScale(20),
+    marginLeft: scale(52), // Align with text start
   },
   // Button Styles
   buttonContainer: {
@@ -376,25 +376,25 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-    paddingHorizontal: 20,
-    paddingBottom: Platform.OS === 'ios' ? 0 : 20, // Safe area handles padding on iOS
+    paddingHorizontal: scale(20),
+    paddingBottom: Platform.OS === 'ios' ? 0 : verticalScale(20), // Safe area handles padding on iOS
     backgroundColor: 'transparent',
   },
   startButton: {
     flexDirection: 'row',
-    height: 56,
-    borderRadius: 12,
+    height: verticalScale(56),
+    borderRadius: scale(12),
     justifyContent: 'center',
     alignItems: 'center',
-    gap: 8,
-    marginBottom: 20,
-    marginTop: 10,
+    gap: scale(8),
+    marginBottom: verticalScale(20),
+    marginTop: verticalScale(10),
   },
   startButtonDisabled: {
     opacity: 0.7,
   },
   startButtonText: {
-    fontSize: 16,
+    fontSize: scale(16),
     color: Colors.white,
   },
 });
