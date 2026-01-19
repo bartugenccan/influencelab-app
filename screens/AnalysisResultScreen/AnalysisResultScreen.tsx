@@ -247,7 +247,7 @@ export const AnalysisResultScreen = () => {
                             {displayScore}
                         </CustomText>
                         <CustomText fontFamily="regular" style={styles.overallSubtext}>
-                            out of 100
+                            out of 10
                         </CustomText>
                     </LinearGradient>
                 </View>
